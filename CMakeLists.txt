@@ -12,6 +12,36 @@ endif()
 # project name
 project( vvdec VERSION 0.2.1.0 )
 
+string(REGEX MATCH "^[0-9]+\\.[0-9]+" compiler_ver "${CMAKE_C_COMPILER_VERSION}")
+set(info "target=${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+if (CMAKE_C_COMPILER_FRONTEND_VARIANT)
+    set(info "${info} compiler=${CMAKE_C_COMPILER_ID}-${compiler_ver}/${CMAKE_C_COMPILER_FRONTEND_VARIANT}")
+else()
+    set(info "${info} compiler=${CMAKE_C_COMPILER_ID}-${compiler_ver}")
+endif()
+if (CMAKE_C_PLATFORM_ID)
+    set(info "${info} runtime=${CMAKE_C_PLATFORM_ID}")
+endif()
+set(info "${info}")
+string(REGEX REPLACE "." "-" delim ${info})
+message(STATUS 	"${delim}")
+message(STATUS 	"${info}")
+message(STATUS 	"${delim}")
+unset(info)
+unset(delim)
+
+option(ENABLE_IPO "Enable Link Time Optimization" FALSE)
+if(ENABLE_IPO)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT ENABLE_IPO)
+endif()
+if(ENABLE_IPO)
+    message("Using IPO")
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+else()
+    message("IPO disabled or not supported")
+endif()
+
 if( NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
   # enable sse4.1 build for all source files for gcc and clang
   if( UNIX OR MINGW )
@@ -45,8 +75,6 @@ set( VVDEC_ENABLE_INSTALL                   ON  CACHE BOOL   "Enable or disable 
 
 # enable postfix
 set( VVDEC_ENABLE_BUILD_TYPE_POSTFIX        OFF CACHE BOOL   "Enable or disable build type postfix for apps and libs" )
-
-set( VVDEC_ENABLE_LINK_TIME_OPT             ON  CACHE BOOL   "Enable link time optimization for release and profile builds" )
 
 if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR
     CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
@@ -159,12 +187,6 @@ endif()
 if( ( UNIX OR MINGW ) AND NOT VVDEC_OPT_TARGET_ARCH STREQUAL "" )
   set( CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -march=${VVDEC_OPT_TARGET_ARCH} -mtune=${VVDEC_OPT_TARGET_ARCH}" )
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=${VVDEC_OPT_TARGET_ARCH} -mtune=${VVDEC_OPT_TARGET_ARCH}" )
-endif()
-
-if( VVDEC_ENABLE_LINK_TIME_OPT )
-    set( CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON )
-    set( CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO ON )
-    set( CMAKE_INTERPROCEDURAL_OPTIMIZATION_MINSIZEREL ON )
 endif()
 
 # use ccache
