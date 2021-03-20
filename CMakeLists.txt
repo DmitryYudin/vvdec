@@ -60,6 +60,10 @@ else()
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-mavx2>)
 endif()
 
+if( UNIX )
+  add_link_options(-static-libgcc -static-libstdc++)
+endif()
+
 if( NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
   # vvdec embedded by superproject, always include source/Lib/vvdec  as first component
   list( PREPEND ${PROJECT_NAME}_ADD_SUBDIRECTORIES "source/Lib/vvdec" )
