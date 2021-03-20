@@ -227,7 +227,7 @@ public:
     ver = (ver >= halMvClipPeriod) ? (ver - mvClipPeriod) : ver;
   }
 };// END CLASS DEFINITION MV
-
+/*
 namespace std
 {
   template <>
@@ -239,7 +239,7 @@ namespace std
     }
   };
 };
-
+*/
 #if JVET_R0058
 extern void(*clipMv) ( Mv& rcMv, const Position& pos, const struct Size& size, const SPS& sps, const PPS& pps );
 void clipMvInPic     ( Mv& rcMv, const Position& pos, const struct Size& size, const SPS& sps, const PPS& pps );

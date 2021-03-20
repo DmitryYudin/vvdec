@@ -123,7 +123,7 @@ inline int64_t abs (int64_t x) { return _abs64(x); };
 # ifndef NVM_COMPILEDBY
 #  define NVM_COMPILEDBY  "[ICC %d]", __INTEL_COMPILER
 # endif
-#elif  _MSC_VER
+#elif _MSC_VER && !__clang__
 #define NVM_COMPILEDBY  "[VS %d]", _MSC_VER
 #endif
 
@@ -534,7 +534,7 @@ template <typename ValueType> inline ValueType leftShift_round (const ValueType 
 template <typename ValueType> inline ValueType rightShift_round(const ValueType value, const int shift) { return (shift >= 0) ? ((value + (ValueType(1) << (shift - 1))) >> shift) : ( value                                   << -shift); }
 
 #ifdef TARGET_SIMD_X86
-#ifdef _WIN32
+#if _WIN32 && !__clang__
 # include <intrin.h>
 static inline unsigned long _bit_scan_reverse( long a )
 {

@@ -134,6 +134,7 @@ struct UnitScale
   constexpr Size     scale( const Size     &size ) const { return { size.width >> posx, size.height >> posy }; }
   constexpr Area     scale( const Area    &_area ) const { return Area{ scale( _area.pos() ), scale( _area.size() ) }; }
 };
+/*
 namespace std
 {
   template <>
@@ -154,6 +155,7 @@ namespace std
     }
   };
 }
+*/
 constexpr inline ptrdiff_t rsAddr(const Position &pos, const ptrdiff_t stride, const UnitScale &unitScale )
 {
   return ( ptrdiff_t )(stride >> unitScale.posx) * ( ptrdiff_t )(pos.y >> unitScale.posy) + ( ptrdiff_t )(pos.x >> unitScale.posx);

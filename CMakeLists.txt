@@ -42,17 +42,25 @@ else()
     message("IPO disabled or not supported")
 endif()
 
-if( NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
-  # enable sse4.1 build for all source files for gcc and clang
-  if( UNIX OR MINGW )
-    add_compile_options( "-msse4.1" )
-  endif()
+if ("Windows" STREQUAL CMAKE_SYSTEM_NAME)
+	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+	add_compile_definitions(_SCL_SECURE_NO_WARNINGS)
+    add_compile_definitions(_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING=1)
+    add_compile_definitions(_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS=1)
+endif()
 
+if ("MSVC" STREQUAL CMAKE_C_COMPILER_ID OR
+    "MSVC" STREQUAL CMAKE_C_COMPILER_FRONTEND_VARIANT)
   # set exception handling
-  if( MSVC )
-    add_compile_options( "/EHsc" )
-  endif()
+  add_compile_options( "/EHsc" )
+  # enable parallel build
+  add_compile_options( "/MP" )
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX2>)
+else()
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-mavx2>)
+endif()
 
+if( NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
   # vvdec embedded by superproject, always include source/Lib/vvdec  as first component
   list( PREPEND ${PROJECT_NAME}_ADD_SUBDIRECTORIES "source/Lib/vvdec" )
   list( REMOVE_DUPLICATES ${PROJECT_NAME}_ADD_SUBDIRECTORIES )
@@ -141,7 +149,7 @@ endif()
 #set( ENABLE_TRACING OFF CACHE BOOL "If SET_ENABLE_TRACING is on, it will be set to this value" )
 
 # set c++14
-set( CMAKE_CXX_STANDARD 14 )
+set( CMAKE_CXX_STANDARD 17 )
 set( CMAKE_CXX_STANDARD_REQUIRED ON )
 
 # compile everything position independent (even static libraries)
