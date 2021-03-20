@@ -52,6 +52,10 @@ endif()
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" )
 message( STATUS "CMAKE_MODULE_PATH: updating module path to: ${CMAKE_MODULE_PATH}" )
 
+if( UNIX )
+  add_link_options(-static-libgcc -static-libstdc++)
+endif()
+
 if( NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
   # set exception handling
   if( MSVC )
