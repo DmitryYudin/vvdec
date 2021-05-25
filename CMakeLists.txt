@@ -87,6 +87,13 @@ set( VVDEC_ENABLE_INSTALL                   ON  CACHE BOOL   "Enable or disable 
 set( VVDEC_ENABLE_BUILD_TYPE_POSTFIX        OFF CACHE BOOL   "Enable or disable build type postfix for apps and libs" )
 
 set( VVDEC_ENABLE_LINK_TIME_OPT             ON  CACHE BOOL   "Enable link time optimization for release and profile builds" )
+if ( VVDEC_ENABLE_LINK_TIME_OPT )
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT VVDEC_ENABLE_LINK_TIME_OPT)
+    if( NOT VVDEC_ENABLE_LINK_TIME_OPT )
+        message("IPO disabled or not supported")
+    endif()
+endif()
 
 if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR
     CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
